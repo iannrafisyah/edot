@@ -1,0 +1,34 @@
+version: "3.7"
+services:
+  postgresql:
+    container_name: postgresql
+    image: postgres:13
+    volumes:
+      - ./psql:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=database
+      - TZ=UTC
+    networks:
+      - backend
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    ports:
+      - 8081:8081
+    networks:
+      - backend
+    restart: always
+    depends_on:
+      - postgresql
+networks:
+  backend:
+    name: backend
+    driver: bridge
